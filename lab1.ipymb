@@ -1,0 +1,52 @@
+img = np.ones((500, 500, 3), np.uint8) * 255
+p1, p2 = (0, 0), (0, 0)
+
+# Function 2: Draw a rectangle
+def draw_rectangle(event, x, y, flags, param):
+    global p1, p2, img
+    if event == cv2.EVENT_LBUTTONDOWN:
+        p1 = (x, y)
+    elif event == cv2.EVENT_LBUTTONUP:
+        p2 = (x, y)
+        cv2.rectangle(img, p1, p2, (0, 255, 0), 2)
+
+# Function 3: Translation transformation
+def translation():
+    global p1, p2, img
+    x = int(input("Enter the translation in x direction: "))
+    y = int(input("Enter the translation in y direction: "))
+    p1 = (p1[0] + x, p1[1] + y)
+    p2 = (p2[0] + x, p2[1] + y)
+    img = np.ones((500, 500, 3), np.uint8) * 255
+    cv2.rectangle(img, p1, p2, (0, 255, 0), 2)
+
+# Function 4: Rotation transformation
+def rotation():
+    global p1, p2, img
+    angle = float(input("Enter the rotation angle in degrees: "))
+    center = ((p1[0] + p2[0]) // 2, (p1[1] + p2[1]) // 2)
+    corners = [(p1[0], p1[1]), (p2[0], p1[1]), (p2[0], p2[1]), (p1[0], p2[1])]
+    rotated_corners = [rotate_point(x, y, angle, center[0], center[1]) for x, y in corners]
+    rotated_corners = np.array(rotated_corners, dtype=np.int32)
+    img = np.ones((500, 500, 3), np.uint8) * 255
+    cv2.polylines(img, [rotated_corners], isClosed=True, color=(0, 255, 0), thickness=2)
+
+def rotate_point(x, y, angle, cx, cy):
+    angle_rad = np.radians(angle)
+    x -= cx
+    y -= cy
+    x_new = x * np.cos(angle_rad) - y * np.sin(angle_rad)
+    y_new = x * np.sin(angle_rad) + y * np.cos(angle_rad)
+    x_new += cx
+    y_new += cy
+    return x_new, y_new
+
+# Function 5: Scaling transformation
+def scaling():
+    global p1, p2, img
+    sx = float(input("Enter the scaling factor in x direction: "))
+    sy = float(input("Enter the scaling factor in y direction: "))
+    p1 = (int(p1[0] * sx), int(p1[1] * sy))
+    p2 = (int(p2[0] * sx), int(p2[1] * sy))
+    img = np.ones((500, 500, 3), np.uint8) * 255
+    cv2.rectangle(img, p1, p2, (0, 255, 0), 2)
